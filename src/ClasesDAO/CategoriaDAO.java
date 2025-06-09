@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriaDAO {
-    
+   
+    //Commit2
     // Método para insertar una nueva categoría
     public boolean insertarCategoria(Categoria categoria) {
         String sql = "INSERT INTO Categoria (nombre) VALUES (?)";
