@@ -4,7 +4,14 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/Conexion/TestConexion.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/CategoriaDAO.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/DetallePedidoDAO.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/ProveedorDAO.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/DetalleVentaDAO.java</file>
             <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/Conexion/DatabaseConnection.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/VentaDAO.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/UsuarioDAO.java</file>
+            <file>file:/C:/Users/ArnieAF/Documents/NetBeansProjects/SistemaIntegrador2/SistemaIntegrador/src/ClasesDAO/ProductoDAO.java</file>
         </group>
     </open-files>
 </project-private>
