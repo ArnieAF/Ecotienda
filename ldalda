@@ -1,0 +1,424 @@
+[1mdiff --git a/src/ClasesDAO/DetallePedidoDAO.java b/src/ClasesDAO/DetallePedidoDAO.java[m
+[1mindex f9fa941..4594955 100644[m
+[1m--- a/src/ClasesDAO/DetallePedidoDAO.java[m
+[1m+++ b/src/ClasesDAO/DetallePedidoDAO.java[m
+[36m@@ -1,13 +1,71 @@[m
+[31m-/*[m
+[31m- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license[m
+[31m- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template[m
+[31m- */[m
+ package ClasesDAO;[m
+ [m
+[31m-/**[m
+[31m- *[m
+[31m- * @author USUARIO[m
+[31m- */[m
+[32m+[m[32mimport Modelo.DetallePedido;[m
+[32m+[m[32mimport Conexion.DatabaseConnection;[m
+[32m+[m
+[32m+[m[32mimport java.sql.*;[m
+[32m+[m[32mimport java.util.ArrayList;[m
+[32m+[m[32mimport java.util.List;[m
+[32m+[m
+ public class DetallePedidoDAO {[m
+ [m
+[32m+[m[32m    // Insertar un detalle de pedido[m
+[32m+[m[32m    public boolean insertarDetallePedido(DetallePedido detalle) {[m
+[32m+[m[32m        String sql = "INSERT INTO detallepedido (cantidad, subTotal, idProducto, idPedido) VALUES (?, ?, ?, ?)";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setInt(1, detalle.getCantidad());[m
+[32m+[m[32m            stmt.setFloat(2, detalle.getSubTotal());[m
+[32m+[m[32m            stmt.setInt(3, detalle.getIdProducto());[m
+[32m+[m[32m            stmt.setInt(4, detalle.getIdPedido());[m
+[32m+[m
+[32m+[m[32m            int filas = stmt.executeUpdate();[m
+[32m+[m[32m            if (filas > 0) {[m
+[32m+[m[32m                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {[m
+[32m+[m[32m                    if (generatedKeys.next()) {[m
+[32m+[m[32m                        detalle.setId(generatedKeys.getInt(1));[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m                return true;[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                return false;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al insertar detalle pedido: " + e.getMessage());[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Listar detalles por idPedido[m
+[32m+[m[32m    public List<DetallePedido> obtenerDetallesPorPedido(int idPedido) {[m
+[32m+[m[32m        List<DetallePedido> lista = new ArrayList<>();[m
+[32m+[m[32m        String sql = "SELECT id, cantidad, subTotal, idProducto, idPedido FROM detallepedido WHERE idPedido = ?";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setInt(1, idPedido);[m
+[32m+[m
+[32m+[m[32m            try (ResultSet rs = stmt.executeQuery()) {[m
+[32m+[m[32m                while (rs.next()) {[m
+[32m+[m[32m                    DetallePedido dp = new DetallePedido();[m
+[32m+[m[32m                    dp.setId(rs.getInt("id"));[m
+[32m+[m[32m                    dp.setCantidad(rs.getInt("cantidad"));[m
+[32m+[m[32m                    dp.setSubTotal(rs.getFloat("subTotal"));[m
+[32m+[m[32m                    dp.setIdProducto(rs.getInt("idProducto"));[m
+[32m+[m[32m                    dp.setIdPedido(rs.getInt("idPedido"));[m
+[32m+[m
+[32m+[m[32m                    lista.add(dp);[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al obtener detalles por pedido: " + e.getMessage());[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        return lista;[m
+[32m+[m[32m    }[m
+ }[m
+[1mdiff --git a/src/ClasesDAO/DetalleVentaDAO.java b/src/ClasesDAO/DetalleVentaDAO.java[m
+[1mindex f597e2d..2d836b7 100644[m
+[1m--- a/src/ClasesDAO/DetalleVentaDAO.java[m
+[1m+++ b/src/ClasesDAO/DetalleVentaDAO.java[m
+[36m@@ -1,13 +1,71 @@[m
+[31m-/*[m
+[31m- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license[m
+[31m- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template[m
+[31m- */[m
+ package ClasesDAO;[m
+ [m
+[31m-/**[m
+[31m- *[m
+[31m- * @author USUARIO[m
+[31m- */[m
+[32m+[m[32mimport Modelo.DetalleVenta;[m
+[32m+[m[32mimport Conexion.DatabaseConnection;[m
+[32m+[m
+[32m+[m[32mimport java.sql.*;[m
+[32m+[m[32mimport java.util.ArrayList;[m
+[32m+[m[32mimport java.util.List;[m
+[32m+[m
+ public class DetalleVentaDAO {[m
+[31m-    [m
+[32m+[m
+[32m+[m[32m    // Insertar detalle venta[m
+[32m+[m[32m    public boolean insertarDetalleVenta(DetalleVenta detalle) {[m
+[32m+[m[32m        String sql = "INSERT INTO detalleventa (idVenta, idProducto, cantidad, subTotal) VALUES (?, ?, ?, ?)";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setInt(1, detalle.getIdVenta());[m
+[32m+[m[32m            stmt.setInt(2, detalle.getIdProducto());[m
+[32m+[m[32m            stmt.setInt(3, detalle.getCantidad());[m
+[32m+[m[32m            stmt.setFloat(4, detalle.getSubTotal());[m
+[32m+[m
+[32m+[m[32m            int filas = stmt.executeUpdate();[m
+[32m+[m
+[32m+[m[32m            if (filas > 0) {[m
+[32m+[m[32m                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {[m
+[32m+[m[32m                    if (generatedKeys.next()) {[m
+[32m+[m[32m                        detalle.setId(generatedKeys.getInt(1));[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m                return true;[m
+[32m+[m[32m            }[m
+[32m+[m[32m            return false;[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al insertar detalle venta: " + e.getMessage());[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Listar detalles por idVenta[m
+[32m+[m[32m    public List<DetalleVenta> obtenerDetallesPorVenta(int idVenta) {[m
+[32m+[m[32m        List<DetalleVenta> lista = new ArrayList<>();[m
+[32m+[m[32m        String sql = "SELECT id, idVenta, idProducto, cantidad, subTotal FROM detalleventa WHERE idVenta = ?";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setInt(1, idVenta);[m
+[32m+[m
+[32m+[m[32m            try (ResultSet rs = stmt.executeQuery()) {[m
+[32m+[m[32m                while (rs.next()) {[m
+[32m+[m[32m                    DetalleVenta dv = new DetalleVenta();[m
+[32m+[m[32m                    dv.setId(rs.getInt("id"));[m
+[32m+[m[32m                    dv.setIdVenta(rs.getInt("idVenta"));[m
+[32m+[m[32m                    dv.setIdProducto(rs.getInt("idProducto"));[m
+[32m+[m[32m                    dv.setCantidad(rs.getInt("cantidad"));[m
+[32m+[m[32m                    dv.setSubTotal(rs.getFloat("subTotal"));[m
+[32m+[m
+[32m+[m[32m                    lista.add(dv);[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al obtener detalles por venta: " + e.getMessage());[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        return lista;[m
+[32m+[m[32m    }[m
+ }[m
+[1mdiff --git a/src/ClasesDAO/ProductoDAO.java b/src/ClasesDAO/ProductoDAO.java[m
+[1mindex 3cdb646..59d9ec6 100644[m
+[1m--- a/src/ClasesDAO/ProductoDAO.java[m
+[1m+++ b/src/ClasesDAO/ProductoDAO.java[m
+[36m@@ -1,13 +1,121 @@[m
+[31m-// Archivo: ClasesDAO/ProductoDAO.java[m
+ package ClasesDAO;[m
+ [m
+ import Modelo.Producto;[m
+[32m+[m[32mimport Conexion.DatabaseConnection;[m
+[32m+[m
+[32m+[m[32mimport java.sql.*;[m
+[32m+[m[32mimport java.util.ArrayList;[m
+ import java.util.List;[m
+ [m
+[31m-public interface ProductoDAO {[m
+[31m-    void insertar(Producto producto);[m
+[31m-    void actualizar(Producto producto);[m
+[31m-    void eliminar(int id);[m
+[31m-    Producto obtenerPorId(int id);[m
+[31m-    List<Producto> obtenerTodos();[m
+[32m+[m[32mpublic class ProductoDAO {[m
+[32m+[m
+[32m+[m[32m    // Insertar un nuevo producto[m
+[32m+[m[32m    public boolean insertarProducto(Producto producto) {[m
+[32m+[m[32m        String sql = "INSERT INTO Producto (nombre, descripcion, precio, cantidad, categoria_id) VALUES (?, ?, ?, ?, ?)";[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setString(1, producto.getNombre());[m
+[32m+[m[32m            stmt.setString(2, producto.getDescripcion());[m
+[32m+[m[32m            stmt.setFloat(3, producto.getPrecio());[m
+[32m+[m[32m            stmt.setInt(4, producto.getCantidad());[m
+[32m+[m[32m            stmt.setInt(5, producto.getCategoria_id());[m
+[32m+[m
+[32m+[m[32m            return stmt.executeUpdate() > 0;[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al insertar producto: " + e.getMessage());[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Obtener todos los productos[m
+[32m+[m[32m    public List<Producto> listarProductos() {[m
+[32m+[m[32m        List<Producto> productos = new ArrayList<>();[m
+[32m+[m[32m        String sql = "SELECT * FROM Producto";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             Statement stmt = conn.createStatement();[m
+[32m+[m[32m             ResultSet rs = stmt.executeQuery(sql)) {[m
+[32m+[m
+[32m+[m[32m            while (rs.next()) {[m
+[32m+[m[32m                Producto producto = new Producto([m
+[32m+[m[32m                        rs.getInt("id"),[m
+[32m+[m[32m                        rs.getString("nombre"),[m
+[32m+[m[32m                        rs.getString("descripcion"),[m
+[32m+[m[32m                        rs.getFloat("precio"),[m
+[32m+[m[32m                        rs.getInt("cantidad"),[m
+[32m+[m[32m                        rs.getInt("categoria_id")[m
+[32m+[m[32m                );[m
+[32m+[m[32m                productos.add(producto);[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al listar productos: " + e.getMessage());[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return productos;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Buscar producto por ID[m
+[32m+[m[32m    public Producto buscarProductoPorId(int id) {[m
+[32m+[m[32m        String sql = "SELECT * FROM Producto WHERE id = ?";[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setInt(1, id);[m
+[32m+[m[32m            try (ResultSet rs = stmt.executeQuery()) {[m
+[32m+[m[32m                if (rs.next()) {[m
+[32m+[m[32m                    return new Producto([m
+[32m+[m[32m                            rs.getInt("id"),[m
+[32m+[m[32m                            rs.getString("nombre"),[m
+[32m+[m[32m                            rs.getString("descripcion"),[m
+[32m+[m[32m                            rs.getFloat("precio"),[m
+[32m+[m[32m                            rs.getInt("cantidad"),[m
+[32m+[m[32m                            rs.getInt("categoria_id")[m
+[32m+[m[32m                    );[m
+[32m+[m[32m                }[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al buscar producto: " + e.getMessage());[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return null;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Actualizar producto[m
+[32m+[m[32m    public boolean actualizarProducto(Producto producto) {[m
+[32m+[m[32m        String sql = "UPDATE Producto SET nombre = ?, descripcion = ?, precio = ?, cantidad = ?, categoria_id = ? WHERE id = ?";[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql)) {[m
+[32m+[m
+[32m+[m[32m            stmt.setString(1, producto.getNombre());[m
+[32m+[m[32m            stmt.setString(2, producto.getDescripcion());[m
+[32m+[m[32m            stmt.setFloat(3, producto.getPrecio());[m
+[32m+[m[32m            stmt.setInt(4, producto.getCantidad());[m
+[32m+[m[32m            stmt.setInt(5, producto.getCategoria_id());[m
+[32m+[m[32m            stmt.setInt(6, producto.getId());[m
+[32m+[m
+[32m+[m[32m            return stmt.executeUpdate() > 0;[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al actualizar producto: " + e.getMessage());[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Eliminar producto por ID[m
+[32m+[m[32m   public boolean eliminarProducto(int idProducto) {[m
+[32m+[m[32m    String sql = "DELETE FROM Producto WHERE id = ?";[m
+[32m+[m[32m    try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m         PreparedStatement stmt = conn.prepareStatement(sql)) {[m
+[32m+[m
+[32m+[m[32m        stmt.setInt(1, idProducto);[m
+[32m+[m[32m        return stmt.executeUpdate() > 0;[m
+[32m+[m
+[32m+[m[32m    } catch (SQLException e) {[m
+[32m+[m[32m        System.err.println("❌ Error al eliminar producto: " + e.getMessage());[m
+[32m+[m[32m        return false;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+ }[m
+[1mdiff --git a/src/ClasesDAO/VentaDAO.java b/src/ClasesDAO/VentaDAO.java[m
+[1mindex 48a75c6..ceda0ee 100644[m
+[1m--- a/src/ClasesDAO/VentaDAO.java[m
+[1m+++ b/src/ClasesDAO/VentaDAO.java[m
+[36m@@ -1,16 +1,69 @@[m
+[31m-/*[m
+[31m- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license[m
+[31m- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template[m
+[31m- */[m
+ package ClasesDAO;[m
+ [m
+[31m-import Modelo.*;[m
+[32m+[m[32mimport Modelo.Venta;[m
+[32m+[m[32mimport Conexion.DatabaseConnection;[m
+[32m+[m
+[32m+[m[32mimport java.sql.*;[m
+[32m+[m[32mimport java.util.ArrayList;[m
+[32m+[m[32mimport java.util.List;[m
+ [m
+[31m-/**[m
+[31m- *[m
+[31m- * @author USUARIO[m
+[31m- */[m
+ public class VentaDAO {[m
+[31m-    //Testeando Git[m
+ [m
+[32m+[m[32m    // Insertar una venta[m
+[32m+[m[32m    public boolean insertarVenta(Venta venta) {[m
+[32m+[m[32m        String sql = "INSERT INTO Venta (fechaVenta, total, idUsuario) VALUES (?, ?, ?)";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {[m
+[32m+[m
+[32m+[m[32m            // Convertir java.util.Date a java.sql.Date[m
+[32m+[m[32m            java.sql.Date sqlDate = new java.sql.Date(venta.getFechaVenta().getTime());[m
+[32m+[m
+[32m+[m[32m            stmt.setDate(1, sqlDate);[m
+[32m+[m[32m            stmt.setFloat(2, venta.getTotal());[m
+[32m+[m[32m            stmt.setInt(3, venta.getIdUsuario());[m
+[32m+[m
+[32m+[m[32m            int filasAfectadas = stmt.executeUpdate();[m
+[32m+[m
+[32m+[m[32m            if (filasAfectadas > 0) {[m
+[32m+[m[32m                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {[m
+[32m+[m[32m                    if (generatedKeys.next()) {[m
+[32m+[m[32m                        venta.setIdVenta(generatedKeys.getInt(1)); // asignar id generado[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m                return true;[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                return false;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al insertar venta: " + e.getMessage());[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // Obtener todas las ventas (opcional)[m
+[32m+[m[32m    public List<Venta> obtenerVentas() {[m
+[32m+[m[32m        List<Venta> ventas = new ArrayList<>();[m
+[32m+[m[32m        String sql = "SELECT idVenta, fechaVenta, total, idUsuario FROM Venta";[m
+[32m+[m
+[32m+[m[32m        try (Connection conn = DatabaseConnection.getInstance().getConnection();[m
+[32m+[m[32m             Statement stmt = conn.createStatement();[m
+[32m+[m[32m             ResultSet rs = stmt.executeQuery(sql)) {[m
+[32m+[m
+[32m+[m[32m            while (rs.next()) {[m
+[32m+[m[32m                Venta v = new Venta();[m
+[32m+[m[32m                v.setIdVenta(rs.getInt("idVenta"));[m
+[32m+[m[32m                v.setFechaVenta(rs.getDate("fechaVenta"));[m
+[32m+[m[32m                v.setTotal(rs.getFloat("total"));[m
+[32m+[m[32m                v.setIdUsuario(rs.getInt("idUsuario"));[m
+[32m+[m[32m                ventas.add(v);[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (SQLException e) {[m
+[32m+[m[32m            System.err.println("❌ Error al obtener ventas: " + e.getMessage());[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        return ventas;[m
+[32m+[m[32m    }[m
+ }[m
+[1mdiff --git a/src/Modelo/Producto.java b/src/Modelo/Producto.java[m
+[1mindex 938e4bf..5305770 100644[m
+[1m--- a/src/Modelo/Producto.java[m
+[1m+++ b/src/Modelo/Producto.java[m
+[36m@@ -15,15 +15,17 @@[m [mpublic class Producto {[m
+     private String descripcion;[m
+     private float precio;[m
+     private int cantidad;[m
+[32m+[m[32m    private int categoria_id;[m
+ [m
+     public Producto() {}[m
+ [m
+[31m-    public Producto(int id, String nombre, String descripcion, float precio, int cantidad) {[m
+[32m+[m[32m    public Producto(int id, String nombre, String descripcion, float precio, int cantidad , int categoria_id) {[m
+         this.id = id;[m
+         this.nombre = nombre;[m
+         this.descripcion = descripcion;[m
+         this.precio = precio;[m
+         this.cantidad = cantidad;[m
+[32m+[m[32m        this.categoria_id = categoria_id;[m
+     }[m
+ [m
+     public int getId() {[m
+[36m@@ -65,4 +67,14 @@[m [mpublic class Producto {[m
+     public void setCantidad(int cantidad) {[m
+         this.cantidad = cantidad;[m
+     }[m
+[32m+[m
+[32m+[m[32m    public int getCategoria_id() {[m
+[32m+[m[32m        return categoria_id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCategoria_id(int categoria_id) {[m
+[32m+[m[32m        this.categoria_id = categoria_id;[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[41m    [m
+ }[m
